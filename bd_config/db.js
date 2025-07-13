@@ -13,16 +13,23 @@ import CartasMazoModel from '../models/carta.mazo.model.js';  // Ajusta la ruta 
 
 dotenv.config();  // Cargar las variables de entorno desde el archivo .env
 const sequelize = new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
+    dbConfig.DB,
+    dbConfig.USER,
+    dbConfig.PASSWORD,
     {
-    host: process.env.DB_HOST,
-    dialect: 'postgres',
-    port: process.env.DB_PORT || 5432,
-    logging: false,
+    host: dbConfig.HOST,
+    port: dbConfig.PORT,
+    dialect: dbConfig.DIALECT,
+    dialectOptions: {
+        ssl: {
+        require: true,
+        rejectUnauthorized: false, // importante para Render
+        },
+    },
+    logging: false
     }
 );
+
 const db = {};
 
 // Definir los modelos
