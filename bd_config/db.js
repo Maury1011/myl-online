@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import { dbConfig } from './db.config.js';
+import dotenv from 'dotenv';
 import CartaModel from '../models/cartas.model.js';  // Importa el modelo Carta
 import RazaModel from '../models/raza.model.js';  // Ajusta la ruta según corresponda
 import TipoModel from '../models/tipo.model.js';  // Ajusta la ruta según corresponda
@@ -11,12 +11,18 @@ import UsuariosModel from '../models/user.model.js';  // Ajusta la ruta según c
 import MazosModel from '../models/mazos.model.js';  // Ajusta la ruta según corresponda
 import CartasMazoModel from '../models/carta.mazo.model.js';  // Ajusta la ruta según corresponda
 
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-    host: dbConfig.HOST,
-    dialect: dbConfig.DIALECT,
-    logging: false // Desactiva el registro de SQL en consola si no lo necesitas
-});
-
+dotenv.config();  // Cargar las variables de entorno desde el archivo .env
+const sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+    host: process.env.DB_HOST,
+    dialect: 'postgres',
+    port: process.env.DB_PORT || 5432,
+    logging: false,
+    }
+);
 const db = {};
 
 // Definir los modelos
