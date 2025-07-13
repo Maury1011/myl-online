@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import dotenv from 'dotenv';
+import { dbConfig } from '../bd_config/db.config.js';  // Asegúrate de que la ruta sea correcta
 import CartaModel from '../models/cartas.model.js';  // Importa el modelo Carta
 import RazaModel from '../models/raza.model.js';  // Ajusta la ruta según corresponda
 import TipoModel from '../models/tipo.model.js';  // Ajusta la ruta según corresponda
