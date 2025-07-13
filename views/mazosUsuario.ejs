@@ -69,8 +69,8 @@
             <% cartas.forEach(carta => { %> 
                 <div>
                     <img class="imagen-peque" 
-                    src="/imagenesWEBP2/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '') %>.webp" 
-                    abc="/imagenesWEBP1/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '') %>.webp" 
+                    src="<%= carta.imagen %>" 
+                    abc="<%= carta.imagen %>" 
                     alt="<%= carta.nombre %>"
                     asd="<%= carta.id %>">
                     <div class="carta-info">

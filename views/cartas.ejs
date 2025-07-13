@@ -100,8 +100,8 @@
             <% cartas.forEach(carta => { %> 
                 <div>
                     <img class="imagen-peque" 
-                    src="/imagenesWEBP2/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre %>.webp" 
-                    abc="/imagenesWEBP1/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre %>.webp"
+                    src="<%= carta.imagen %>" 
+                    abc="<%= carta.imagen %>"
                     alt="<%= carta.nombre %>">
                     <div class="carta-info">
                         <button onclick="mostrarModal('modalMazos')" class="boton boton-agregar-mazo" data-id="<%= carta.id %>">Agregar a mazo</button>
