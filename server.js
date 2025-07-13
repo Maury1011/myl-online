@@ -26,9 +26,6 @@ app.use(session({
 
 // Configura el directorio público para archivos estáticos
 app.use(express.static('public'));
-app.use('/imagenesWEBP2', express.static('imagenesWEBP2'));
-app.use('/imagenesWEBP1', express.static('imagenesWEBP1'));
-
 // Configura EJS como motor de plantillas
 app.set('view engine', 'ejs');
 app.set('views', './views');

@@ -4,13 +4,19 @@
 
 --------------
 
+## Pagina desplegada en Render 
+
+    https://myl-online.onrender.com
+
+---------------
+
 ## 🚀 Tecnologías utilizadas
 
 - **Frontend**: HTML, CSS, JavaScript, EJS
 - **Backend**: Node.js + Express
 - **Base de datos**: PostgreSQL + Sequalize
 - **Vistas**: EJS templates
-- **Deploy**: 
+- **Deploy**: Render
 
 -------------
 
