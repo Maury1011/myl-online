@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartas MyL</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="modal.css">
+    <link rel="stylesheet" href="filters.css"> <!-- Estilos para los filtros -->
+</head>
+<body>
+    <div class="header">
+        <h1>MyL Cartas</h1>
+        <button class="boton" onclick="mostrarModal('modal-register')">Registrarse</button>
+        <button class="boton" onclick="mostrarModal('modal-login')">Iniciar Sesión</button>
+    </div>
+
+    <div class="nav">
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/mazos">Mazos</a></li>
+        </ul>
+    </div>
+
+    <!-- Modal de Registro -->
+    <div id="modal-register" class="modal">
+        <div class="modal-content">
+            <span class="cerrar-modal" onclick="cerrarModal('modal-register')">&times;</span>
+            <h2>Registrarse</h2>
+            <form id="registerForm" onsubmit="register(event)">
+                <input type="text" id="register-nombre" placeholder="Nombre de usuario" required><br>
+                <input type="email" id="register-email" placeholder="Correo electrónico" required><br>
+                <input type="password" id="register-password" placeholder="Contraseña" required><br>
+                <button class="boton" type="submit">Continuar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Inicio de Sesión -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content">
+            <span class="cerrar-modal" onclick="cerrarModal('modal-login')">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm" onsubmit="login(event)">
+                <input type="email" id="login-email" placeholder="Correo electrónico" required><br>
+                <input type="password" id="login-password" placeholder="Contraseña" required><br>
+                <button class="boton" type="submit">Continuar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div id="filters">
+        <form method="get" action="/">
+            <select name="edicion" id="edicion">
+                <option value="">Edición</option>
+                <% ediciones.forEach(edicion => { %>
+                    <option value="<%= edicion.id %>" <%= edicion.id == selectedEdicion ? 'selected' : '' %>><%= edicion.nombre %></option>
+                <% }); %>
+            </select>
+            
+            <select name="tipo" id="tipo">
+                <option value="">Tipo</option>
+                <% tipos.forEach(tipo => { %>
+                    <option value="<%= tipo.id %>" <%= tipo.id == selectedTipo ? 'selected' : '' %>><%= tipo.nombre %></option>
+                <% }); %>
+            </select>
+
+            <select name="raza" id="raza">
+                <option value="">Raza</option>
+                <% razas.forEach(raza => { %>
+                    <option value="<%= raza.id %>" <%= raza.id == selectedRaza ? 'selected' : '' %>><%= raza.nombre %></option>
+                <% }); %>
+            </select>
+
+            <select name="subRaza" id="subRaza">
+                <option value="">Sub Raza</option>
+                <% subRazas.forEach(sub_raza => { %>
+                    <option value="<%= sub_raza.id %>" <%= selectedSubRaza && selectedSubRaza.includes(sub_raza.id.toString()) ? 'selected' : '' %>>
+                        <%= sub_raza.nombre %>
+                    </option>
+                <% }); %>
+            </select>
+            
+
+            <select name="rareza" id="rareza">
+                <option value="">Rareza</option>
+                <% rarezas.forEach(rareza => { %>
+                    <option value="<%= rareza.id %>" <%= rareza.id == selectedRareza ? 'selected' : '' %>><%= rareza.nombre %></option>
+                <% }); %>
+            </select>
+
+            <button class="boton2" type="submit">Filtrar</button>
+        </form>
+    </div>
+
+    <div class="cartas-container">
+        <div class="cartas-list">
+            <% cartas.forEach(carta => { %> 
+                <div>
+                    <img class="imagen-peque" 
+                    src="/imagenesWEBP2/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre %>.webp" 
+                    abc="/imagenesWEBP1/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre %>.webp"
+                    alt="<%= carta.nombre %>">
+                    <div class="carta-info">
+                        <button onclick="mostrarModal('modalMazos')" class="boton boton-agregar-mazo" data-id="<%= carta.id %>">Agregar a mazo</button>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <%
+    const queryParams = [];
+
+    if (selectedEdicion) queryParams.push(`edicion=${selectedEdicion}`);
+    if (selectedTipo) queryParams.push(`tipo=${selectedTipo}`);
+    if (selectedRaza) queryParams.push(`raza=${selectedRaza}`);
+    if (selectedRareza) queryParams.push(`rareza=${selectedRareza}`);
+    if (selectedSubRaza && selectedSubRaza.length > 0) {
+        queryParams.push(`subRaza=${selectedSubRaza[0]}`);
+    }
+
+    const filterQuery = queryParams.join('&');
+%>
+
+
+<div class="paginacion">
+    <% if (page > 1) { %>
+        <a href="?<%= filterQuery %>&page=<%= page - 1 %>">⬅ Anterior</a>
+    <% } %>
+
+    <span >Página <%= page %> de <%= totalPages %></span>
+
+    <% if (page < totalPages) { %>
+        <a href="?<%= filterQuery %>&page=<%= page + 1 %>">Siguiente ➡</a>
+    <% } %>
+</div>
+
+    
+
+        <!-- Modal -->
+<div id="modalMazos" class="modal">
+    <div class="modal-content">
+        <span class="cerrar-modal" onclick="cerrarModal('modalMazos')">&times;</span>
+        <h3>Selecciona un mazo</h3>
+        <ul id="listaMazos">
+            <% mazos.forEach(mazo => { %>
+                <button class="boton" onclick="añadirCarta('<%= mazo.id %>')"><%= mazo.nombre %></button>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+
+    <!-- Modal para la imagen en grande -->
+    <div id="modal" class="modal">
+        <img class="imagen-grande" id="imagenGrande" src="" alt="Imagen en grande">
+    </div>
+
+    <script>
+        function añadirCarta(mazoId) {
+            const modal = document.getElementById('modalMazos');
+            const cartaId = modal.dataset.cartaId;
+    
+            if (!cartaId) {
+                alert('No se encontró la carta para agregar.');
+                return;
+            }
+            console.log('Añadiendo carta', { mazoId, cartaId });
+
+    
+            fetch('/anadirCarta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ mazoId, cartaId })
+            })
+            .then(async res => {
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Carta añadida al mazo.');
+                    modal.style.display = 'none';
+                } else {
+                    alert(data.message || 'Error al añadir la carta.');
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Error del servidor al añadir la carta.');
+            });
+        }
+    
+        function cerrarModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.boton-agregar-mazo').forEach(boton => {
+                boton.addEventListener('click', () => {
+                    const cartaId = boton.dataset.id;
+                    const modal = document.getElementById('modalMazos');
+                    modal.dataset.cartaId = cartaId;
+                    modal.style.display = 'block';
+                });
+            });
+        });
+    </script>
+
+    <script>
+        async function register(event) {
+            event.preventDefault();
+            const nombre = document.getElementById('register-nombre').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+    
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nombre, email, password })
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                alert('Registro exitoso.');
+                // Redirigir a la página de productos
+                window.location.href = '/mazos';
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+    
+    <script>
+        async function login(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+    
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                alert('Inicio de sesión exitoso.');
+                window.location.href = '/mazos';
+            } else {
+                alert(data.message);
+            }
+        }
+    
+    </script>
+
+    <script>
+        var modal = document.getElementById("modal");
+        var imagenGrande = document.getElementById("imagenGrande");
+    
+        var imagenes = document.querySelectorAll('.imagen-peque');
+        imagenes.forEach(function(imagen) {
+            imagen.onclick = function() {
+                var imagenSrc = imagen.getAttribute('abc');
+                imagenGrande.src = imagenSrc;
+                modal.style.display = "flex";
+            }
+        });
+    
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+    <script>
+        function mostrarModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function cerrarModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+    </script>
+
+    
+</body>
+</html>

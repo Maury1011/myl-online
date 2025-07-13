@@ -1,0 +1,155 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto; /* Permite desplazamiento vertical si el contenido excede la altura de la ventana */
+    box-sizing: border-box;
+    display: inline;
+}
+
+.header {
+    background-color: #AF1740;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
+h1 {
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+}
+
+.imagen-peque{
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    width: 180px;
+}
+
+.cartas-container {
+    padding: 20px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cartas-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    justify-content: center;
+    gap: 15px;
+}
+
+.carta-info {
+    font-size: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.carta-info p {
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+
+.carta-imagen {
+    width: 200px; /* Ajusta el tamaño de la imagen */
+}
+
+.carta-imagen img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.imagen-pequena:hover {
+    opacity: 0.7;
+}
+
+/* Imagen en el modal */
+.imagen-grande {
+    max-width: 90vw;
+    max-height: 90vh;
+    margin: auto;
+    display: block;
+}
+
+/* Estilo del botón para cerrar */
+.cerrar {
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    cursor: pointer;
+}
+
+.cerrar:hover {
+    color: #ccc;
+}
+
+#toggle-filters {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000; /* Asegura que el botón esté por encima de los demás elementos */
+    background-color: #17a2b8;
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#toggle-filters:hover {
+    background-color: #117a8b;
+}
+#listaMazos {
+    padding: 0;
+    justify-content: center;
+}
+
+.paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    font-size: 1rem;
+}
+
+.paginacion a {
+    padding: 8px 14px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.paginacion a:hover {
+    background-color: #0056b3;
+}
+
+.paginacion span {
+    font-weight: bold;
+}

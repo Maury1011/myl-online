@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mazos</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="userstyle.css">
+    <link rel="stylesheet" href="modal.css">
+    <link rel="stylesheet" href="filters.css">
+    <link rel="stylesheet" href="nav.css">
+</head>
+<body>
+    <div class="header">
+        <h1>MyL Cartas</h1>
+    </div>
+    <div class="nav">
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/mazos">Mazos</a></li>
+        </ul>
+    </div>
+    <div id="filters">
+        <h2> <%= nameMazo %> </h2>
+        <form action="/mazos">
+            <select name="cartasMazo" id="mazos">
+                <% mazos.forEach(mazos => { %>
+                    <option value="<%= mazos.id %>" <%= selectedMazos && selectedMazos.includes(mazos.id.toString()) ? 'selected' : '' %>>
+                        <%= mazos.nombre %>
+                    </option>
+                <% }); %>
+            </select>
+            <button class="boton" type="submit">Filtrar</button>
+        </form>
+        <button class="boton" onclick="mostrarModal('mazo-create')">Crear Mazo</button>
+        <button class="boton"onclick="mostrarModal('delete-mazo')">Eliminar un Mazo</button>
+    </div>
+
+    <div id="delete-mazo" class="modal">
+        <div class="modal-content">
+            <span class="cerrar-modal" onclick="cerrarModal('delete-mazo')">&times;</span>
+            <h2>Selecciona el mazo a eliminar</h2>
+            <form id="mazo" onsubmit="deleteMazo(event)">
+                <select name="mazos" id="mazos2">
+                    <% mazos.forEach(mazos => { %>
+                        <option value="<%= mazos.id %>">
+                            <%= mazos.nombre %>
+                        </option>
+                    <% }); %>
+                </select><br>
+                <button class="boton" type="submit">Eliminar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="mazo-create" class="modal">
+        <div class="modal-content">
+            <span class="cerrar-modal" onclick="cerrarModal('mazo-create')">&times;</span>
+            <h2>Nombre Del Mazo</h2>
+            <form id="mazo" onsubmit="createMazo(event)">
+                <input type="text" id="create-name" placeholder="nombre del mazo" required><br>
+                <button class="boton" type="submit">Continuar</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="cartas-container">
+        <div class="cartas-list">
+            <% cartas.forEach(carta => { %> 
+                <div>
+                    <img class="imagen-peque" 
+                    src="/imagenesWEBP2/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '') %>.webp" 
+                    abc="/imagenesWEBP1/<%= carta.Edicion ? carta.Edicion.nombre.replace(/ /g, "_") : 'default_edicion' %>/<%= carta.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '') %>.webp" 
+                    alt="<%= carta.nombre %>"
+                    asd="<%= carta.id %>">
+                    <div class="carta-info">
+                        <button onclick="mostrarModal('modalMazos')" class="boton boton-agregar-mazo" data-id="<%= carta.id %>">Agregar</button>
+                        <button class="boton" onclick="deleteCarta()" carta_id="<%= carta.id %>" mazo_id="<%= cartasMazo %>">Eliminar</button>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <!-- Modal -->
+<div id="modalMazos" class="modal">
+    <div class="modal-content">
+        <span class="cerrar-modal" onclick="cerrarModal('modalMazos')">&times;</span>
+        <h3>Selecciona un mazo</h3>
+        <ul id="listaMazos">
+            <% mazos.forEach(mazo => { %>
+                <button onclick="añadirCarta('<%= mazo.id %>')"><%= mazo.nombre %></button>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+    
+    <!-- Modal para la imagen en grande -->
+    <div id="modal" class="modal">
+        <img class="imagen-grande" id="imagenGrande" src="" alt="Imagen en grande">
+    </div>
+
+    <script>
+        function deleteCarta() {
+            const cartaId = event.target.getAttribute('carta_id');
+            const mazoId = event.target.getAttribute('mazo_id');
+
+            message = confirm('¿Estás seguro de que deseas eliminar esta carta?');
+            if (!message) {
+                return;
+            }
+            fetch('/deleteCarta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cartaId, mazoId })
+            })
+            .then(async res => {
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Carta eliminada del mazo.');
+                    window.location.reload(); // Recargar la página para ver los cambios
+                } else {
+                    alert(data.message || 'Error al eliminar la carta.');
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Error del servidor al eliminar la carta.');
+            });
+        }
+    </script>
+
+    <script>
+        function añadirCarta(mazoId) {
+            const modal = document.getElementById('modalMazos');
+            const cartaId = modal.dataset.cartaId;
+    
+            if (!cartaId) {
+                alert('No se encontró la carta para agregar.');
+                return;
+            }
+            console.log('Añadiendo carta', { mazoId, cartaId });
+
+    
+            fetch('/anadirCarta', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ mazoId, cartaId })
+            })
+            .then(async res => {
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Carta añadida al mazo.');
+                    modal.style.display = 'none';
+                } else {
+                    alert(data.message || 'Error al añadir la carta.');
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Error del servidor al añadir la carta.');
+            });
+        }
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.boton-agregar-mazo').forEach(boton => {
+                boton.addEventListener('click', () => {
+                    const cartaId = boton.dataset.id;
+                    const modal = document.getElementById('modalMazos');
+                    modal.dataset.cartaId = cartaId;
+                    modal.style.display = 'block';
+                });
+            });
+        });
+    </script>
+    
+    <script>
+        async function deleteMazo(event) {
+            event.preventDefault();
+            const mazoId = document.querySelector('#mazos2').value;
+            message = confirm('¿Estás seguro de que deseas eliminar este mazo?');
+            if (!message) {
+                return;
+            }
+    
+            const response = await fetch('/deleteMazo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ mazoId })
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                alert('mazo eliminado con exito');
+                window.location.href = '/mazos';
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+
+    <script>
+        async function createMazo(event) {
+            event.preventDefault();
+            const name = document.getElementById('create-name').value;
+    
+            const response = await fetch('/createMazo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name })
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                alert('mazo creado con exito');
+                window.location.href = '/mazos';
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+
+    <script>
+        var modal = document.getElementById("modal");
+        var imagenGrande = document.getElementById("imagenGrande");
+    
+        var imagenes = document.querySelectorAll('.imagen-peque');
+        imagenes.forEach(function(imagen) {
+            imagen.onclick = function() {
+                var imagenSrc = imagen.getAttribute('abc');
+                imagenGrande.src = imagenSrc;
+                modal.style.display = "flex";
+            }
+        });
+    
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+        <script>
+            function mostrarModal(id) {
+                document.getElementById(id).style.display = 'flex';
+            }
+    
+            function cerrarModal(id) {
+                document.getElementById(id).style.display = 'none';
+            }
+    
+        </script>
+
+</body>
+</html>
